@@ -30,6 +30,7 @@ onMounted(() => {
     <div v-if="loggedInUser" class="border border-slate-300 p-3 break-all">
       <h2>User Details</h2>
       <p><strong>UID:</strong> {{ loggedInUser.uid }}</p>
+      <p><strong>username:</strong> {{ loggedInUser.displayName }}</p>
       <!-- <p>{{ loggedInUser }}</p> -->
       <p><strong>Email Verified:</strong> {{ loggedInUser.emailVerified }}</p>
       <Chat :loggedInUser="loggedInUser" />

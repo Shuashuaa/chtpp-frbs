@@ -5,13 +5,19 @@ import {
     signInWithEmailAndPassword, 
     signOut, 
     sendEmailVerification, 
+    updateProfile,
     type UserCredential, 
     type User 
 } from 'firebase/auth';
 
-export async function registerUser(email: string, password: string): Promise<UserCredential | null> {
+export async function registerUser(email: string, password: string, displayName: string): Promise<UserCredential | null> {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+
+    await updateProfile(userCredential.user, {
+      displayName: displayName,
+    })
+
     console.log('Registration successful:', userCredential.user);
     return userCredential;
   } catch (error: any) {
