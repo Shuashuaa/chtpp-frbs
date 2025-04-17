@@ -9,6 +9,7 @@ import { logoutUser } from './composables/auth';
 
 const loggedInUser = ref(auth.currentUser);
 const loading = ref(true); // Add a loading state
+const isLoginPage = ref(true);
 
 onMounted(() => {
   auth.onAuthStateChanged((user: any) => {
@@ -21,10 +22,12 @@ onMounted(() => {
 <template>
   <div class="p-3">
     <!-- <ChtppVue sample="ehe"/> -->
-    <h1>App</h1>
+    <!-- <h1>App</h1> -->
     <div v-if="!loggedInUser && !loading">
-      <Login />
-      <Register />
+      <Login v-if="isLoginPage"/>
+      <Register v-else/>
+      <p v-if="isLoginPage" @click="isLoginPage = !isLoginPage">Don't Have an account yet? <span class="underline cursor-pointer text-blue-600">Register</span>.</p>
+      <p v-else @click="isLoginPage = !isLoginPage">Already have an account? <span class="underline cursor-pointer text-blue-600">Login</span>.</p>
     </div>
 
     <div v-if="loggedInUser" class="border border-slate-300 p-3 break-all">

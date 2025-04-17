@@ -1,6 +1,6 @@
 <template>
     <div>
-      <h2 class="text-xl font-semibold mb-4">Global Chat</h2>
+      <h2 class="text-xl font-semibold mb-4">Chat</h2>
       <div class="chat-messages border border-gray-300 p-2 mb-2 h-[300px] overflow-y-auto">
         <div
           v-for="message in messages"
