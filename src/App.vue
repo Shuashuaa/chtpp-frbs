@@ -37,7 +37,7 @@ onMounted(() => {
       <!-- <p>{{ loggedInUser }}</p> -->
       <p><strong>Email Verified:</strong> {{ loggedInUser.emailVerified }}</p>
       <Chat :loggedInUser="loggedInUser" />
-      <button @click="logoutUser" class="border border-slate-300 rounded-md py-1 px-2 cursor-pointer hover:bg-slate-200">Logout</button>
+      <button @click="logoutUser" class="border border-slate-300 rounded-md py-1 px-2 mt-2 cursor-pointer hover:bg-red-500">Logout</button>
     </div>
     <div v-else-if="loading">
       <p>Loading user session...</p>

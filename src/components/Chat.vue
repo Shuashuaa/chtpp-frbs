@@ -20,6 +20,7 @@
           placeholder="Type your message..."
           @input="handleTyping"
           @blur="stopTyping"
+          @keydown.enter="sendMessage"
           class="flex-grow p-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <button
