@@ -46,7 +46,7 @@
   const isSending = ref(false);
   const isTyping = ref(false);
   const isSomeoneTyping = ref(false);
-  const typingTimeout = ref<number | null>(null);
+  const typingTimeout = ref<number | undefined>(undefined);
   
   onMounted(() => {
     if (db && loggedInUser.value) {
