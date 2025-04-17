@@ -36,7 +36,6 @@ onMounted(() => {
         <button @click="logoutUser" class="border border-slate-300 rounded-md py-1 px-2 cursor-pointer hover:bg-red-400">Logout</button>
       </div>
       <p><strong>UID:</strong> {{ loggedInUser.uid }}</p>
-      <!-- <p>{{ loggedInUser }}</p> -->
       <p class="mb-5"><strong>Email Verified:</strong> {{ loggedInUser.emailVerified }}</p>
       <Chat :loggedInUser="loggedInUser" />
     </div>

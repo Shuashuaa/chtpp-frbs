@@ -104,7 +104,7 @@
 
 <template>
   <div>
-    <h2 class="text-xl font-semibold mb-4">Chat</h2>
+    <h2 class="text-xl font-semibold mb-1">Chat</h2>
     <div class="chat-messages border border-gray-300 p-2 mb-2 h-[300px] overflow-y-auto">
       <div
         v-for="message in messages"
@@ -112,9 +112,9 @@
         :class="message.userId == loggedInUser?.uid ? 'text-right' : 'text-left'"
         class="message p-1 border-b border-dotted border-gray-200 last:border-b-0"
       >
-        <span class="user font-bold mr-1">{{ message.displayName || 'Anonymous' }}:</span>
-        <span class="text">{{ message.text }}</span>
-        <span class="timestamp text-xs text-gray-500 ml-2">{{ formatTimestamp(message.timestamp) }}</span>
+        <span class="text-gray-700 font-bold mr-1">{{ message.displayName || 'Anonymous' }}:</span>
+        <span class="text-gray-600">{{ message.text }}</span>
+        <span class="timestamp text-[11px] text-gray-400 ml-2">{{ formatTimestamp(message.timestamp) }}</span>
       </div>
     </div>
     <p v-if="isSomeoneTyping && loggedInUser" class="text-sm italic text-gray-500">Someone is typing...</p>
