@@ -1,42 +1,4 @@
-<template>
-    <div>
-      <h2 class="text-xl font-semibold mb-4">Chat</h2>
-      <div class="chat-messages border border-gray-300 p-2 mb-2 h-[300px] overflow-y-auto">
-        <div
-          v-for="message in messages"
-          :key="message.id"
-          :class="message.userId == loggedInUser?.uid ? 'text-right' : 'text-left'"
-          class="message py-1 border-b border-dotted border-gray-200 last:border-b-0"
-        >
-          <span class="user font-bold mr-1">{{ message.displayName || 'Anonymous' }}:</span>
-          <span class="text">{{ message.text }}</span>
-          <span class="timestamp text-xs text-gray-500 ml-2">{{ formatTimestamp(message.timestamp) }}</span>
-        </div>
-      </div>
-      <div class="chat-input flex" v-if="loggedInUser">
-        <input
-          type="text"
-          v-model="newMessage"
-          placeholder="Type your message..."
-          @input="handleTyping"
-          @blur="stopTyping"
-          @keydown.enter="sendMessage"
-          class="flex-grow p-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <button
-          @click="sendMessage"
-          :disabled="!newMessage || isSending"
-          class="px-3 py-2 border border-gray-300 rounded-r-md bg-gray-100 cursor-pointer disabled:bg-gray-300 disabled:cursor-not-allowed"
-        >
-          Send
-        </button>
-      </div>
-      <p v-else class="text-gray-600">Please log in to participate in the chat.</p>
-      <p v-if="isSomeoneTyping && loggedInUser" class="text-sm italic text-gray-500">Someone is typing...</p>
-    </div>
-  </template>
-  
-  <script setup lang="ts">
+<script setup lang="ts">
   import { ref, onMounted, computed } from 'vue';
   import { auth, db } from '@/firebase'; // Adjust import path
   import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, doc, setDoc, deleteDoc } from 'firebase/firestore';
@@ -138,4 +100,42 @@
     }
     return '';
   };
-  </script>
+</script>
+
+<template>
+  <div>
+    <h2 class="text-xl font-semibold mb-4">Chat</h2>
+    <div class="chat-messages border border-gray-300 p-2 mb-2 h-[300px] overflow-y-auto">
+      <div
+        v-for="message in messages"
+        :key="message.id"
+        :class="message.userId == loggedInUser?.uid ? 'text-right' : 'text-left'"
+        class="message p-1 border-b border-dotted border-gray-200 last:border-b-0"
+      >
+        <span class="user font-bold mr-1">{{ message.displayName || 'Anonymous' }}:</span>
+        <span class="text">{{ message.text }}</span>
+        <span class="timestamp text-xs text-gray-500 ml-2">{{ formatTimestamp(message.timestamp) }}</span>
+      </div>
+    </div>
+    <p v-if="isSomeoneTyping && loggedInUser" class="text-sm italic text-gray-500">Someone is typing...</p>
+    <div class="chat-input flex gap-2" v-if="loggedInUser">
+      <input
+        type="text"
+        v-model="newMessage"
+        placeholder="Type your message..."
+        @input="handleTyping"
+        @blur="stopTyping"
+        @keydown.enter="sendMessage"
+        class="flex-grow p-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+      <button
+        @click="sendMessage"
+        :disabled="!newMessage || isSending"
+        class="px-3 py-2 border border-gray-300 rounded-r-md bg-blue-300 hover:bg-blue-200 cursor-pointer disabled:bg-gray-300 disabled:cursor-not-allowed"
+      >
+        Send
+      </button>
+    </div>
+    <p v-else class="text-gray-600">Please log in to participate in the chat.</p>
+  </div>
+</template>

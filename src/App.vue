@@ -31,13 +31,14 @@ onMounted(() => {
     </div>
 
     <div v-if="loggedInUser" class="border border-slate-300 p-3 break-all">
-      <h2>User Details</h2>
+      <div class="flex justify-between">
+        <p><strong>username:</strong> {{ loggedInUser.displayName }}</p>
+        <button @click="logoutUser" class="border border-slate-300 rounded-md py-1 px-2 cursor-pointer hover:bg-red-400">Logout</button>
+      </div>
       <p><strong>UID:</strong> {{ loggedInUser.uid }}</p>
-      <p><strong>username:</strong> {{ loggedInUser.displayName }}</p>
       <!-- <p>{{ loggedInUser }}</p> -->
-      <p><strong>Email Verified:</strong> {{ loggedInUser.emailVerified }}</p>
+      <p class="mb-5"><strong>Email Verified:</strong> {{ loggedInUser.emailVerified }}</p>
       <Chat :loggedInUser="loggedInUser" />
-      <button @click="logoutUser" class="border border-slate-300 rounded-md py-1 px-2 mt-2 cursor-pointer hover:bg-red-500">Logout</button>
     </div>
     <div v-else-if="loading">
       <p>Loading user session...</p>
