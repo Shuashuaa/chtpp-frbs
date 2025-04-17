@@ -103,7 +103,7 @@
 </script>
 
 <template>
-  <div>
+  <div class="w-[600px]">
     <h2 class="text-xl font-semibold mb-1">Chat</h2>
     <div class="chat-messages border border-gray-300 p-2 mb-2 h-[300px] overflow-y-auto">
       <div
@@ -112,8 +112,8 @@
         :class="message.userId == loggedInUser?.uid ? 'text-right' : 'text-left'"
         class="message p-1 border-b border-dotted border-gray-200 last:border-b-0"
       >
-        <span class="text-gray-700 font-bold mr-1">{{ message.displayName || 'Anonymous' }}:</span>
-        <span class="text-gray-600">{{ message.text }}</span>
+        <span class="text-gray-700 text-sm font-bold mr-1">{{ message.displayName || 'Anonymous' }}:</span>
+        <span class="text-gray-600 text-sm">{{ message.text }}</span>
         <span class="timestamp text-[11px] text-gray-400 ml-2">{{ formatTimestamp(message.timestamp) }}</span>
       </div>
     </div>
