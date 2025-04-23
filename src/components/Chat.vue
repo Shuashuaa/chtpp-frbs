@@ -15,7 +15,7 @@
   
   onMounted(() => {
     if (db && loggedInUser.value) {
-      const messagesRef = collection(db, 'messages');
+      const messagesRef = collection(db, 'messages_aports');
       const q = query(messagesRef, orderBy('timestamp', 'asc'));
   
       onSnapshot(q, (snapshot) => {
@@ -111,7 +111,7 @@
     if (newMessage.value && loggedInUser.value && db && !isSending.value) {
       isSending.value = true;
       try {
-        await addDoc(collection(db, 'messages'), {
+        await addDoc(collection(db, 'messages_aports'), {
           text: newMessage.value,
           userId: loggedInUser.value.uid,
           displayName: loggedInUser.value.displayName || null,
@@ -239,7 +239,7 @@
     <div class="chat-input flex gap-2" v-if="loggedInUser">
       <div class="relative w-full">
         <!-- <svg @click="isEmojiOn = !isEmojiOn" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/></svg> -->
-        <svg ref="emojiButtonRef" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/></svg>
+        <svg ref="emojiButtonRef" @click="isEmojiOn = !isEmojiOn" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/></svg>
         <input
           type="text"
           v-model="newMessage"
