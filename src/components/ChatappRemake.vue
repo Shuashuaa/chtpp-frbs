@@ -218,12 +218,10 @@ onBeforeUnmount(() => {
 					<span class="text-gray-700 text-sm font-bold mr-1">
 						{{ message.displayName || 'Anonymous' }}:
 					</span>
-					<div class="text-gray-600 text-left text-sm whitespace-pre-wrap">
-						<br />
+					<div class="text-gray-600 text-left text-sm whitespace-pre-wrap mb-2">
 						{{ message.text }}
-						<br />
 					</div>
-					<span class="timestamp text-[11px] text-gray-400 ml-2">
+					<span class="timestamp text-[11px] text-gray-400">
 						{{ formatTimestamp(message.timestamp) }}
 					</span>
 				</div>
