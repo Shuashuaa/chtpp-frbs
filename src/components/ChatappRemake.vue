@@ -28,7 +28,7 @@ const loggedInUser = computed(() => auth.currentUser);
 const messages = ref<any[]>([]);
 const newMessage = ref('');
 const isSending = ref(false);
-const isEmojiOn = ref(false);
+// const isEmojiOn = ref(false);
 
 const sendMessage = async () => {
     if (newMessage.value.trim() && loggedInUser.value && db && !isSending.value) {
@@ -52,7 +52,6 @@ const sendMessage = async () => {
 };
 
 // Group messages by date (creates, yesterday, today and a specific date if far)
-
 const groupedMessages = computed(() => {
     const grouped: any[] = [];
     let lastDate = '';
@@ -101,6 +100,64 @@ const groupedMessages = computed(() => {
 
     return grouped;
 });
+
+const reactionEmojis: Record<string, string> = {
+    like: '👍',
+    heart: '❤️',
+    haha: '😂',
+    angry: '😡',
+    sad: '😢',
+};
+
+const groupedReactions = computed(() => {
+    const grouped: Record<string, Record<string, number>> = {};
+
+    for (const messageId in reactions.value) {
+        const counts: Record<string, number> = {};
+        for (const reaction of reactions.value[messageId]) {
+            if (!counts[reaction.type]) {
+                counts[reaction.type] = 0;
+            }
+            counts[reaction.type]++;
+        }
+        grouped[messageId] = counts;
+    }
+
+    return grouped;
+});
+
+const isReactionOpen = ref(false);
+
+const addReaction = async (messageId: string, reactionType: string) => {
+    if (loggedInUser.value) {
+        try {
+            await addDoc(collection(db, 'messages_aports', messageId, 'reactions'), {
+                userId: loggedInUser.value.uid,
+                type: reactionType,
+                timestamp: serverTimestamp(),
+            });
+
+			isReactionOpen.value = false;
+        } catch (error) {
+            console.error('Error adding reaction:', error);
+        }
+    }
+};
+
+const reactions = ref<any>({});
+
+const fetchReactions = async (messageId: string) => {
+    const reactionsRef = collection(db, 'messages_aports', messageId, 'reactions');
+    const q = query(reactionsRef, orderBy('timestamp', 'asc'));
+
+    onSnapshot(q, (snapshot) => {
+        const reactionsData = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        }));
+        reactions.value[messageId] = reactionsData;
+    });
+};
 
 const originalTitle = document.title;
 
@@ -155,9 +212,11 @@ onMounted(() => {
 				...doc.data(),
 			}));
 
-			const lastMessage = newMessages[newMessages.length - 1];
-
 			messages.value = newMessages;
+
+			newMessages.forEach((msg) => fetchReactions(msg.id)); // fetching reactions
+
+			const lastMessage = newMessages[newMessages.length - 1];
 
 			nextTick(() => {
 				// Only trigger new message behavior if it’s from someone else
@@ -174,7 +233,7 @@ onMounted(() => {
 
         onSnapshot(typingRef, (snapshot) => {
             isSomeoneTyping.value = snapshot.docs.some(
-                (doc) => doc.id !== loggedInUser.value?.uid && doc.data()?.isTyping
+                (doc) => doc.id !== loggedInUser.value?.uid && doc.data()?.isTyping // checks if 'isTyping' is true or false
             );
         }); 
         // ✅ Listens for changes in typing status and sets `isSomeoneTyping` to true
@@ -207,9 +266,9 @@ onBeforeUnmount(() => {
 				<!-- Date Separator -->
 				<div v-if="message.type === 'date'" class="w-full text-center my-4">
 					<div class="flex items-center justify-center gap-2 text-gray-500 text-sm">
-					<hr class="flex-grow border-t border-gray-300" />
-					<span class="px-2">{{ message.label }}</span>
-					<hr class="flex-grow border-t border-gray-300" />
+						<hr class="flex-grow border-t border-gray-300" />
+						<span class="px-2">{{ message.label }}</span>
+						<hr class="flex-grow border-t border-gray-300" />
 					</div>
 				</div>
 
@@ -221,6 +280,33 @@ onBeforeUnmount(() => {
 					<div class="text-gray-600 text-left text-sm whitespace-pre-wrap mb-2">
 						{{ message.text }}
 					</div>
+
+					<!-- Reaction Buttons -->
+					<div v-if="isReactionOpen" class="flex space-x-2 mt-2 *:cursor-pointer">
+						<button @click="addReaction(message.id, 'like')" class="text-gray-500">👍</button>
+						<button @click="addReaction(message.id, 'heart')" class="text-red-500">❤️</button>
+						<button @click="addReaction(message.id, 'haha')" class="text-yellow-500">😂</button>
+						<button @click="addReaction(message.id, 'angry')" class="text-red-700">😡</button>
+						<button @click="addReaction(message.id, 'sad')" class="text-blue-500">😢</button>
+					</div>
+
+					<!-- Display Reactions -->
+					<!-- <div v-if="reactions[message.id]" class="mt-2 text-sm text-gray-600">
+						<span v-for="reaction in reactions[message.id]" :key="reaction.id">
+							{{ reaction.type }}
+						</span>
+					</div> -->
+					<div v-if="groupedReactions[message.id]" class="mt-2 text-sm text-gray-600 flex gap-2">
+						<span
+							v-for="(count, type) in groupedReactions[message.id]"
+							:key="type"
+							class="flex items-center bg-gray-100 px-2 py-1 rounded-full"
+						>
+							{{ reactionEmojis[type] }} {{ count }}
+						</span>
+						<p @click="isReactionOpen = true" class="cursor-pointer flex items-center bg-gray-100 px-2 py-1 rounded-full">+</p>
+					</div>
+					
 					<span class="timestamp text-[11px] text-gray-400">
 						{{ formatTimestamp(message.timestamp) }}
 					</span>
