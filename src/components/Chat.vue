@@ -169,7 +169,7 @@
       if (lastMessage.userId === loggedInUser.value?.uid) return;
 
       if (shouldAutoScroll.value || isInitialLoad) {
-        el.scrollTop = el.scrollHeight;
+        el.scrollTop = el.scrollHeight; // scroll to latest
         unseenMessageCount.value = 0;
       } else {
         unseenMessageCount.value += 1;
