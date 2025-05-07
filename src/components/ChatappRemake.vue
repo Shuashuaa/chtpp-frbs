@@ -34,7 +34,7 @@ const sendMessage = async () => {
     if (newMessage.value.trim() && loggedInUser.value && db && !isSending.value) {
         isSending.value = true;
         try {
-            await addDoc(collection(db, 'remake_doc'), {
+            await addDoc(collection(db, 'messages_aports'), {
                 text: newMessage.value,
                 userId: loggedInUser.value.uid,
                 displayName: loggedInUser.value.displayName || 'Anonymous',
@@ -143,8 +143,8 @@ onMounted(() => {
 	chatContainerRef.value?.addEventListener('scroll', handleScroll);
 	
     if (db && loggedInUser.value) {
-        const messagesRef = collection(db, 'remake_doc'); 
-        // ✅ Reference to the 'remake_doc' collection in Firestore (used for storing messages)
+        const messagesRef = collection(db, 'messages_aports'); 
+        // ✅ Reference to the 'messages_aports' collection in Firestore (used for storing messages)
 
         const q = query(messagesRef, orderBy('timestamp', 'asc')); 
         // ✅ Creates a query to fetch messages ordered by timestamp (ascending)
