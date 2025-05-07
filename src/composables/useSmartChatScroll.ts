@@ -27,7 +27,8 @@ export function useSmartChatScroll() {
 
     const handleScroll = () => {
         if (!chatContainerRef.value) return;
-        isUserNearBottom.value = isNearBottom();
+        isUserNearBottom.value = isNearBottom(); // false || true
+        
         if (isUserNearBottom.value) {
             newMessageCount.value = 0; // Clear when scrolled to bottom
         }
