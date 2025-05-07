@@ -46,5 +46,5 @@ npm run test:unit
 - [x] Auto-Scroll to bottom for senders
 - [x] Group Message by date
 - [x] Composables
+- [x] Message Reaction
 - [] Emoji
-- [] Message Reaction
