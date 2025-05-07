@@ -37,3 +37,14 @@ npm run build
 ```sh
 npm run test:unit
 ```
+
+## App Features
+- [x] Displaying of Messages
+- [x] Sending of new Message
+- [x] Someone is typing... feature
+- [x] New message and document title notification display for receivers
+- [x] Auto-Scroll to bottom for senders
+- [x] Group Message by date
+- [x] Composables
+- [] Emoji
+- [] Message Reaction
