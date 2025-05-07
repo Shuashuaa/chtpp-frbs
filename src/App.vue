@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import ChtppVue from './components/Chtpp.vue';
+import ChtppVue from './components/ChatappRemake.vue';
 import Login from './components/Login.vue';
 import Register from './components/Register.vue';
-import Chat from './components/Chat.vue';
+import Chat from './components/ChatappRemake.vue';
 import { ref, onMounted } from 'vue';
 import { auth } from '@/firebase';
 import { logoutUser } from './composables/auth';
@@ -31,13 +31,18 @@ onMounted(() => {
     </div>
 
     <div v-if="loggedInUser" class="border border-slate-300 p-3 break-all">
-      <div class="flex justify-between">
-        <p><strong>username:</strong> {{ loggedInUser.displayName }}</p>
-        <button @click="logoutUser" class="border border-slate-300 rounded-md py-1 px-2 cursor-pointer hover:bg-red-400">Logout</button>
+      
+      <div>
+        <div class="flex justify-between">
+          <p><strong>username:</strong> {{ loggedInUser.displayName }}</p>
+          <button @click="logoutUser" class="border border-slate-300 rounded-md py-1 px-2 cursor-pointer hover:bg-red-400">Logout</button>
+        </div>
+        <p><strong>UID:</strong> {{ loggedInUser.uid }}</p>
+        <p class="mb-5"><strong>Email Verified:</strong> {{ loggedInUser.emailVerified }}</p>
       </div>
-      <p><strong>UID:</strong> {{ loggedInUser.uid }}</p>
-      <p class="mb-5"><strong>Email Verified:</strong> {{ loggedInUser.emailVerified }}</p>
+      
       <Chat :loggedInUser="loggedInUser" />
+
     </div>
     <div v-else-if="loading">
       <p>Loading user session...</p>
