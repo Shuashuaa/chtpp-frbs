@@ -14,6 +14,13 @@ import {
 } from 'firebase/firestore';
 import { formatTimestamp } from '../composables/format';
 import { useSmartChatScroll } from '@/composables/useSmartChatScroll';
+import { useChatAnalytics } from '@/composables/useChatAnalytics';
+
+const { 
+    trackMessageInputFocused, 
+    trackMessageSent, 
+    trackReactionAdded 
+} = useChatAnalytics();
 
 const {
     chatContainerRef,
@@ -29,20 +36,26 @@ const messages = ref<any[]>([]);
 const newMessage = ref('');
 const isSending = ref(false);
 // const isEmojiOn = ref(false);
+const messageTextareaRef = ref<HTMLTextAreaElement | null>(null);
 
 const sendMessage = async () => {
-    if (newMessage.value.trim() && loggedInUser.value && db && !isSending.value) {
+    const messageText = newMessage.value.trim();
+    if (messageText && loggedInUser.value && db && !isSending.value) {
         isSending.value = true;
         try {
             await addDoc(collection(db, 'messages_aports'), {
-                text: newMessage.value,
+                text: messageText,
                 userId: loggedInUser.value.uid,
                 displayName: loggedInUser.value.displayName || 'Anonymous',
                 timestamp: serverTimestamp(),
             });
+
+            trackMessageSent(messageText.length);
+
             newMessage.value = '';
 			scrollToBottom();
             stopTyping();
+
         } catch (error) {
             console.error('Error sending message:', error);
         } finally {
@@ -137,6 +150,8 @@ const addReaction = async (messageId: string, reactionType: string) => {
                 timestamp: serverTimestamp(),
             });
 
+            trackReactionAdded(reactionType);
+
 			isReactionOpen.value = false;
         } catch (error) {
             console.error('Error adding reaction:', error);
@@ -198,6 +213,10 @@ const isSomeoneTyping = ref(false);
 
 onMounted(() => {
 	chatContainerRef.value?.addEventListener('scroll', handleScroll);
+
+    if (messageTextareaRef.value) {
+        messageTextareaRef.value.addEventListener('focus', trackMessageInputFocused);
+    }
 	
     if (db && loggedInUser.value) {
         const messagesRef = collection(db, 'messages_aports'); 
@@ -244,6 +263,11 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
 	chatContainerRef.value?.removeEventListener('scroll', handleScroll);
+
+    if (messageTextareaRef.value) {
+        messageTextareaRef.value.removeEventListener('focus', trackMessageInputFocused);
+    }
+
 	document.title = originalTitle;
     stopTyping();
 });
@@ -339,7 +363,7 @@ onBeforeUnmount(() => {
 						@keydown.enter.exact.prevent="sendMessage"
 						rows="2"
 						class="w-full p-3 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none transition-all"
-						ref="textarea"
+						ref="messageTextareaRef"
 					/>
 					
 					<!-- Send Button -->
