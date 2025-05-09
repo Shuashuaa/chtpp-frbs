@@ -78,7 +78,7 @@ onMounted(() => {
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 p-3 border border-slate-300">
 
         <div class="col-span-1 lg:col-span-1 break-all">
-          <div class="flex justify-between items-center mb-2 lg:mb-0"> <p><strong>Hello!,</strong> {{ loggedInUser.displayName }}.</p>
+          <div class="flex justify-between items-center mb-2 lg:mb-0"> <p >Hello, <strong>{{ loggedInUser.displayName }}!</strong> </p>
             <button
             @click="handleLogout"
               class="border border-slate-300 rounded-md py-1 px-2 cursor-pointer hover:bg-red-400 lg:hidden"
@@ -86,9 +86,12 @@ onMounted(() => {
               Logout
             </button>
           </div>
-          <p class="text-sm"><strong>UID:</strong> {{ loggedInUser.uid }}</p>
+          <p class="text-[13px]">
+            <!-- <strong class="text-slate-800">UID:</strong>  -->
+            <span class="text-slate-600">{{ loggedInUser.uid }}</span>
+          </p>
           <div class="flex items-center">
-            <p class=" text-sm lg:mb-0 mr-1"><strong>Email Verified:</strong></p>
+            <p class="text-[13px] lg:mb-0 mr-1"><strong class="text-slate-700">Email Verified:</strong></p>
             <div v-if="loggedInUser.emailVerified === true">
                 <BadgeCheck class="w-5 h-5 mr-1" fill="#3897f1" color="#ffffff" :stroke-width="2" />
               </div>

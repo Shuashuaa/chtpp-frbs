@@ -104,7 +104,7 @@ onUnmounted(() => {
     <ul>
       <li v-for="user in onlineUsers" :key="user.id" class="mb-1">
         <span class="inline-block w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-        <p class="inline-block text-sm">{{ user.displayName }}</p>
+        <p class="inline-block text-sm text-slate-700">{{ user.displayName }}</p>
       </li>
       <!-- <li v-if="onlineUsers.length === 0">No users online.</li> -->
     </ul>
@@ -115,7 +115,7 @@ onUnmounted(() => {
     <ul>
       <li v-for="user in offlineUsers" :key="user.id" class="mb-1">
         <span class="inline-block w-2 h-2 bg-slate-400 rounded-full mr-2"></span>
-        <p class="inline-block text-sm">{{ user.displayName }}</p>
+        <p class="inline-block text-sm text-slate-700">{{ user.displayName }}</p>
       </li>
       <!-- <li v-if="onlineUsers.length === 0">No users online.</li> -->
     </ul>
