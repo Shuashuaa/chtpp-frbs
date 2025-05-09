@@ -8,7 +8,7 @@ import { ref, onMounted } from 'vue';
 import { logoutUser } from './composables/auth';
 import { auth, db } from '@/firebase';
 import { doc, updateDoc, serverTimestamp } from 'firebase/firestore'; // Import firestore functions
-
+import { BadgeCheck, TriangleAlert } from 'lucide-vue-next';
 const loggedInUser = ref(auth.currentUser);
 const loading = ref(true); // Add a loading state
 const isLoginPage = ref(true);
@@ -66,7 +66,7 @@ onMounted(() => {
   <div>
     <!-- <ChtppVue sample="ehe"/> -->
     <!-- <h1>App</h1> -->
-    <div v-if="!loggedInUser && !loading">
+    <div v-if="!loggedInUser && !loading" class="ml-5 mt-5">
       <Login v-if="isLoginPage"/>
       <Register v-else/>
       <p v-if="isLoginPage" @click="isLoginPage = !isLoginPage">Don't Have an account yet? <span class="underline cursor-pointer text-blue-600">Register</span>.</p>
@@ -78,7 +78,7 @@ onMounted(() => {
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 p-3 border border-slate-300">
 
         <div class="col-span-1 lg:col-span-1 break-all">
-          <div class="flex justify-between items-center mb-2 lg:mb-0"> <p><strong>username:</strong> {{ loggedInUser.displayName }}</p>
+          <div class="flex justify-between items-center mb-2 lg:mb-0"> <p><strong>Hello!,</strong> {{ loggedInUser.displayName }}.</p>
             <button
             @click="handleLogout"
               class="border border-slate-300 rounded-md py-1 px-2 cursor-pointer hover:bg-red-400 lg:hidden"
@@ -86,12 +86,24 @@ onMounted(() => {
               Logout
             </button>
           </div>
-          <p><strong>UID:</strong> {{ loggedInUser.uid }}</p>
-          <p class="mb-5 lg:mb-0"><strong>Email Verified:</strong> {{ loggedInUser.emailVerified }}</p>
+          <p class="text-sm"><strong>UID:</strong> {{ loggedInUser.uid }}</p>
+          <div class="flex items-center">
+            <p class=" text-sm lg:mb-0 mr-1"><strong>Email Verified:</strong></p>
+            <div v-if="loggedInUser.emailVerified === true">
+                <BadgeCheck class="w-5 h-5 mr-1" fill="#3897f1" color="#ffffff" :stroke-width="2" />
+              </div>
+              <div v-else>
+                <div class="flex">
+                  <TriangleAlert class="w-5 h-5 mr-1"/>
+                  <a href="#" class="text-[15px] text-blue-500 hover:underline">verify</a>
+                </div>
+              </div>
+          </div>
 
           <div class="mt-5">
-             <OnlineUsers />
+            <OnlineUsers />
           </div>
+          
         </div>
 
         <div class="col-span-1 lg:col-start-2 lg:col-span-2">
