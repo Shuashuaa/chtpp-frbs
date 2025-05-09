@@ -114,8 +114,8 @@ const reactionEmojis: Record<string, string> = {
     like: '👍',
     heart: '❤️',
     haha: '😂',
-    angry: '😡',
     sad: '😢',
+    angry: '😡',
 };
 
 const groupedReactions = computed(() => {
@@ -270,13 +270,13 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-	<div class="">
+	<div>
         
         <div class="flex justify-between items-center">
             <h2 class="text-xl font-semibold">Chat</h2>
             <div class="flex items-center pb-1">
                 <div>
-                    <img class="w-6" src="../../public/nexus.png" alt="">
+                    <img class="w-6" src="/nexus.png" alt="">
                 </div>
                 &nbsp;
                 <p class="text-[12px] text-slate-400">— v0.4.23</p>
