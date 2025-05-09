@@ -14,14 +14,7 @@ import {
 } from 'firebase/firestore';
 import { formatTimestamp } from '../composables/format';
 import { useSmartChatScroll } from '@/composables/useSmartChatScroll';
-import { useChatAnalytics } from '@/composables/useChatAnalytics';
 import { useStagger } from '@/composables/useStagger';
-
-const { 
-    trackMessageInputFocused, 
-    trackMessageSent, 
-    trackReactionAdded 
-} = useChatAnalytics();
 
 const {
     chatContainerRef,
@@ -42,7 +35,6 @@ const messages = ref<any[]>([]);
 const newMessage = ref('');
 const isSending = ref(false);
 // const isEmojiOn = ref(false);
-const messageTextareaRef = ref<HTMLTextAreaElement | null>(null);
 
 const sendMessage = async () => {
     const messageText = newMessage.value.trim();
@@ -55,8 +47,6 @@ const sendMessage = async () => {
                 displayName: loggedInUser.value.displayName || 'Anonymous',
                 timestamp: serverTimestamp(),
             });
-
-            trackMessageSent(messageText.length);
 
             newMessage.value = '';
 			scrollToBottom();
@@ -156,8 +146,6 @@ const addReaction = async (messageId: string, reactionType: string) => {
                 timestamp: serverTimestamp(),
             });
 
-            trackReactionAdded(reactionType);
-
             openReactionMessageId.value = null;
 
         } catch (error) {
@@ -228,10 +216,6 @@ const isSomeoneTyping = ref(false);
 
 onMounted(() => {
 	chatContainerRef.value?.addEventListener('scroll', handleScroll);
-
-    if (messageTextareaRef.value) {
-        messageTextareaRef.value.addEventListener('focus', trackMessageInputFocused);
-    }
 	
     if (db && loggedInUser.value) {
         const messagesRef = collection(db, 'messages_aports'); 
@@ -279,10 +263,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
 	chatContainerRef.value?.removeEventListener('scroll', handleScroll);
 
-    if (messageTextareaRef.value) {
-        messageTextareaRef.value.removeEventListener('focus', trackMessageInputFocused);
-    }
-
 	document.title = originalTitle;
     stopTyping();
 });
@@ -290,12 +270,22 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-	<div class="md:w-[600px]">
-		<h2 class="text-xl font-semibold mb-1">Chat</h2>
-
+	<div class="">
+        
+        <div class="flex justify-between items-center">
+            <h2 class="text-xl font-semibold">Chat</h2>
+            <div class="flex items-center pb-1">
+                <div>
+                    <img class="w-6" src="../../public/nexus.png" alt="">
+                </div>
+                &nbsp;
+                <p class="text-[12px] text-slate-400">— v0.4.23</p>
+            </div>
+        </div>
+		
 		<div
 			ref="chatContainerRef"
-			class="chat-messages border border-gray-300 p-2 mb-2 h-[500px] overflow-y-auto bg-white rounded"
+			class="chat-messages border border-gray-300 p-2 my-2 h-[500px] overflow-y-auto bg-white rounded"
 		>
 			<div
 				v-for="(message, index) in groupedMessages"
@@ -381,7 +371,6 @@ onBeforeUnmount(() => {
 						@keydown.enter.exact.prevent="sendMessage"
 						rows="2"
 						class="w-full p-3 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none transition-all"
-						ref="messageTextareaRef"
 					/>
 					
 					<!-- Send Button -->
