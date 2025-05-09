@@ -49,7 +49,8 @@ npm run test:unit
 - [x] Composables
 - [x] Message Reactions
     - [ ] users can react once
-- [ ] Show Online Users
+- [ ] Image Upload / Avatar Change
+- [x] Show Online Users
 - [ ] Reply Feature
 - [ ] Emoji Selector
 - [ ] Ai Integration
