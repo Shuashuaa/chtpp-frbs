@@ -38,7 +38,8 @@ npm run build
 npm run test:unit
 ```
 
-## App Features
+# App Features
+
 - [x] Displaying of Messages
 - [x] Sending of new Message
 - [x] Someone is typing... feature
@@ -46,5 +47,11 @@ npm run test:unit
 - [x] Auto-Scroll to bottom for senders
 - [x] Group Message by date
 - [x] Composables
-- [x] Message Reaction
-- [] Emoji
+- [x] Message Reactions
+    - [ ] users can react once
+- [ ] Show Online Users
+- [ ] Reply Feature
+- [ ] Emoji Selector
+- [ ] Ai Integration
+- [ ] Integration of apps (alarm, time, calculator, etc.)
+- [ ] Private Chat
