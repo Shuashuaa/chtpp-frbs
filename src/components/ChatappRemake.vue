@@ -31,7 +31,16 @@ const {
 } = useStagger();
 
 const loggedInUser = computed(() => auth.currentUser);
-const messages = ref<any[]>([]);
+
+interface ChatMessage {
+	id: string;
+	text: string;
+	userId: string;
+	displayName: string;
+	timestamp: any;
+}
+
+const messages = ref<ChatMessage[]>([]);
 const newMessage = ref('');
 const isSending = ref(false);
 // const isEmojiOn = ref(false);
@@ -212,6 +221,7 @@ const stopTyping = async () => {
 }; 
 // ✅ Writing — sets 'isTyping: false' for the logged-in user's document (when they stop typing)
 
+const isInitialLoadComplete = ref(false);
 const isSomeoneTyping = ref(false);
 
 onMounted(() => {
@@ -224,28 +234,55 @@ onMounted(() => {
         const q = query(messagesRef, orderBy('timestamp', 'asc')); 
         // ✅ Creates a query to fetch messages ordered by timestamp (ascending)
 
-        onSnapshot(q, (snapshot) => {
-			const newMessages = snapshot.docs.map((doc) => ({
-				id: doc.id,
-				...doc.data(),
-			}));
+        onSnapshot(q, async (snapshot) => {
+            const newMessages = snapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            })) as ChatMessage[];
 
-			messages.value = newMessages;
+            messages.value = newMessages;
 
-			newMessages.forEach((msg) => fetchReactions(msg.id)); // fetching reactions
+            newMessages.forEach((msg) => fetchReactions(msg.id));
 
-			const lastMessage = newMessages[newMessages.length - 1];
-            console.log(lastMessage, 'lastMessage');
+            // Wait for all reactions to load before continuing
+            await Promise.all(
+                newMessages.map((msg) => new Promise<void>((resolve) => {
+                    const reactionsRef = collection(db, 'messages_aports', msg.id, 'reactions');
+                    const reactionQuery = query(reactionsRef, orderBy('timestamp', 'asc'));
 
-			nextTick(() => {
-				// Only trigger new message behavior if it’s from someone else
-				if (lastMessage?.userId !== loggedInUser.value?.uid) {
-					handleNewMessage(); // Show banner if receiver and not near bottom
-				} else {
-					scrollToBottom(); // Always scroll for the sender
-				}
-			});
-		});
+                    const unsubscribe = onSnapshot(reactionQuery, (reactionSnap) => {
+                        const reactionsData = reactionSnap.docs.map((doc) => ({
+                            id: doc.id,
+                            ...doc.data(),
+                        }));
+                        reactions.value[msg.id] = reactionsData;
+
+                        unsubscribe(); // Stop listening after initial fetch
+                        resolve();     // Mark this reaction fetch as complete
+                    });
+                }))
+            );
+
+            isInitialLoadComplete.value = true;
+
+            nextTick(() => {
+                const lastMessage = newMessages[newMessages.length - 1];
+
+                if (lastMessage?.userId !== loggedInUser.value?.uid) {
+                    handleNewMessage(); // show notification if from someone else
+                } else {
+                    scrollToBottom();   // auto-scroll if sender
+                }
+            });
+        });
+
+        
+
+
+
+
+
+
 
         const typingRef = collection(db, 'typing'); 
         // ✅ Reference to the 'typing' collection in Firestore (stores typing status per user)
@@ -271,7 +308,6 @@ onBeforeUnmount(() => {
 
 <template>
 	<div>
-        
         <div class="flex justify-between items-center">
             <h2 class="text-xl font-semibold">Chat</h2>
             <div class="flex items-center pb-1">
@@ -354,7 +390,7 @@ onBeforeUnmount(() => {
 				<!-- New Message Notification -->
 				<div v-if="newMessageCount > 0 && !isUserNearBottom" class="absolute right-50 top-0 flex justify-center z-10">
 					<button 
-						@click="scrollToBottom" 
+						@click="() => scrollToBottom()" 
 						class="cursor-pointer bg-gradient-to-r from-blue-600 to-blue-400 text-white px-6 py-2 rounded-lg shadow-lg text-sm font-semibold hover:from-blue-500 hover:to-blue-300 transition-all"
 					>
 						New message{{ newMessageCount > 1 ? 's' : '' }} ({{ newMessageCount }})

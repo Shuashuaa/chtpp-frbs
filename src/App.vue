@@ -7,7 +7,7 @@ import OnlineUsers from './components/OnlineUsers.vue'; // Import the new compon
 import { ref, onMounted } from 'vue';
 import { logoutUser } from './composables/auth';
 import { auth, db } from '@/firebase';
-import { doc, updateDoc, serverTimestamp } from 'firebase/firestore'; // Import firestore functions
+import { doc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore'; // Import firestore functions
 import { BadgeCheck, TriangleAlert } from 'lucide-vue-next';
 const loggedInUser = ref(auth.currentUser);
 const loading = ref(true); // Add a loading state
@@ -49,13 +49,12 @@ onMounted(() => {
       } catch (e) {
         console.error("Error setting user online status on login: ", e);
          // If the document doesn't exist, create it
-        // import { setDoc } from 'firebase/firestore';
-        // await setDoc(userRef, {
-        //   uid: user.uid,
-        //   displayName: user.displayName || 'Anonymous',
-        //   isOnline: true,
-        //   lastSeen: serverTimestamp(),
-        // });
+        await setDoc(userRef, {
+          uid: user.uid,
+          displayName: user.displayName || 'Anonymous',
+          isOnline: true,
+          lastSeen: serverTimestamp(),
+        });
       }
     }
   });
