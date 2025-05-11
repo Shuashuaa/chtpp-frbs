@@ -69,46 +69,39 @@ onMounted(() => {
       <p v-else @click="isLoginPage = !isLoginPage">Already have an account? <span class="underline cursor-pointer text-blue-600">Login</span>.</p>
     </div>
 
-    <div v-if="loggedInUser" class="border border-slate-300 p-3 break-all">
-      <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 p-3 border border-slate-300">
-        <div class="col-span-1 lg:col-span-1 break-all">
-          <div class="flex justify-between items-center mb-2 lg:mb-0"> <p >Hello, <strong>{{ loggedInUser.displayName }}!</strong> </p>
-            <button
-            @click="handleLogout"
-              class="border border-slate-300 rounded-md py-1 px-2 cursor-pointer hover:bg-red-400 lg:hidden"
-            >
-              Logout
-            </button>
-          </div>
-          <p class="text-[13px]">
-            <!-- <strong class="text-slate-800">UID:</strong>  -->
-            <span class="text-slate-600">{{ loggedInUser.uid }}</span>
-          </p>
+    <div v-if="loggedInUser">
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        
+        <div class="col-span-1 mx-5 my-5">
+          <p >Hello, <strong>{{ loggedInUser.displayName }}!</strong> </p>
+          <button
+          @click="handleLogout"
+            class="border border-slate-300 rounded-md py-1 px-2 cursor-pointer hover:bg-red-400 lg:hidden"
+          >
+            Logout
+          </button>
+          <span class="text-slate-600">{{ loggedInUser.uid }}</span>
           <div class="flex items-center">
             <p class="text-[13px] lg:mb-0 mr-1"><strong class="text-slate-700">Email Verified:</strong></p>
             <div v-if="loggedInUser.emailVerified === true">
-                <BadgeCheck class="w-5 h-5 mr-1" fill="#3897f1" color="#ffffff" :stroke-width="2" />
+              <BadgeCheck class="w-5 h-5 mr-1" fill="#3897f1" color="#ffffff" :stroke-width="2" />
+            </div>
+            <div v-else>
+              <div class="flex">
+                <TriangleAlert class="w-5 h-5 mr-1"/>
+                <a href="#" class="text-[15px] text-blue-500 hover:underline">verify</a>
               </div>
-              <div v-else>
-                <div class="flex">
-                  <TriangleAlert class="w-5 h-5 mr-1"/>
-                  <a href="#" class="text-[15px] text-blue-500 hover:underline">verify</a>
-                </div>
-              </div>
+            </div>
           </div>
-
-          <div class="mt-5">
-            <OnlineUsers />
-          </div>
-          
+          <OnlineUsers class="mt-5" />
         </div>
 
-        <div class="col-span-1 lg:col-start-2 lg:col-span-2">
+        <div class="col-span-1 lg:col-span-2">
           <Chat :loggedInUser="loggedInUser" />
         </div>
 
-        <div class="col-span-1 lg:col-span-1 hidden lg:flex lg:justify-end">
-          <div>
+        <div class="col-span-1 hidden lg:block mr-5 mt-5">
+          <div class="flex justify-end">
             <button
             @click="handleLogout"
               class="border border-slate-300 rounded-md py-1 px-2 cursor-pointer hover:bg-red-400"
