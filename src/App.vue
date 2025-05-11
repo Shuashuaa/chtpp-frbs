@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import ChtppVue from './components/ChatappRemake.vue';
-import Login from './components/Login.vue';
-import Register from './components/Register.vue';
-import Chat from './components/ChatappRemake.vue';
-import OnlineUsers from './components/OnlineUsers.vue'; // Import the new component
+import Login from './Pages/Login.vue';
+import Register from './Pages/Register.vue';
+import Chat from './Pages/Chat.vue';
+import OnlineUsers from './components/OnlineUsers.vue';
 import { ref, onMounted } from 'vue';
 import { logoutUser } from './composables/auth';
 import { auth, db } from '@/firebase';
-import { doc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore'; // Import firestore functions
+import { doc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { BadgeCheck, TriangleAlert } from 'lucide-vue-next';
 const loggedInUser = ref(auth.currentUser);
 const loading = ref(true); // Add a loading state
@@ -63,19 +62,15 @@ onMounted(() => {
 
 <template>
   <div>
-    <!-- <ChtppVue sample="ehe"/> -->
-    <!-- <h1>App</h1> -->
     <div v-if="!loggedInUser && !loading" class="ml-5 mt-5">
       <Login v-if="isLoginPage"/>
       <Register v-else/>
       <p v-if="isLoginPage" @click="isLoginPage = !isLoginPage">Don't Have an account yet? <span class="underline cursor-pointer text-blue-600">Register</span>.</p>
       <p v-else @click="isLoginPage = !isLoginPage">Already have an account? <span class="underline cursor-pointer text-blue-600">Login</span>.</p>
     </div>
-    <!-- lg:flex lg:justify-between block -->
+
     <div v-if="loggedInUser" class="border border-slate-300 p-3 break-all">
-
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 p-3 border border-slate-300">
-
         <div class="col-span-1 lg:col-span-1 break-all">
           <div class="flex justify-between items-center mb-2 lg:mb-0"> <p >Hello, <strong>{{ loggedInUser.displayName }}!</strong> </p>
             <button
