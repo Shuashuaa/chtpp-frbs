@@ -167,8 +167,8 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-	<div>
-        <div class="flex justify-between items-center">
+	<div class="h-screen flex flex-col py-5 px-5">
+        <div class="min-h-[5%] flex justify-between items-center">
             <h2 class="text-xl font-semibold">Chat</h2>
             <div class="flex items-center pb-1">
                 <div>
@@ -181,7 +181,7 @@ onBeforeUnmount(() => {
 		
 		<div
 			ref="chatContainerRef"
-			class="chat-messages border border-gray-300 p-2 my-2 h-[500px] overflow-y-auto bg-white rounded"
+			class="flex-1 chat-messages border border-gray-300 p-2 my-2 overflow-y-auto bg-white rounded"
 		>
 			<div
 				v-for="(message, index) in groupedMessages"
@@ -242,7 +242,7 @@ onBeforeUnmount(() => {
 			</div>
 		</div>
 
-		<div class="chat-input flex flex-col gap-2 items-start" v-if="loggedInUser">
+		<div class="min-h-[5%] chat-input flex flex-col gap-2 items-start" v-if="loggedInUser">
 			<p v-if="isSomeoneTyping" class="text-sm text-slate-600">Someone is typing...</p>
 			
 			<div class="relative flex w-full">
