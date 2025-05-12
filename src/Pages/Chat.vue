@@ -4,6 +4,7 @@ import { auth, db } from '@/firebase';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import { formatTimestamp } from '../composables/format';
 import { useSmartChatScroll } from '@/composables/useSmartChatScroll';
+import linkify from '@/composables/useLinkify';
 
 const messageLimit = ref(15);
 const allMessages = ref<ChatMessage[]>([]);
@@ -175,7 +176,7 @@ onBeforeUnmount(() => {
                     <img class="w-6" src="/nexus.png" alt="">
                 </div>
                 &nbsp;
-                <p class="text-[12px] text-slate-400">— v0.4.23</p>
+                <p class="text-[12px] text-slate-400">— v0.5.0.1</p>
             </div>
         </div>
 		
@@ -203,9 +204,10 @@ onBeforeUnmount(() => {
 					<span class="text-gray-700 text-sm font-bold mr-1">
 						{{ message.displayName || 'Anonymous' }}:
 					</span>
-					<div class="text-gray-600 text-left text-sm whitespace-pre-wrap mb-2">
-						{{ message.text }}
-					</div>
+                    <div
+                        class="text-gray-600 text-left text-sm whitespace-pre-wrap mb-2"
+                        v-html="linkify(message.text)"
+                    ></div>
 
 					<!-- Reaction Buttons -->
 					<Transition name="reactions-popup"
@@ -226,11 +228,16 @@ onBeforeUnmount(() => {
 					<!-- Display Reactions -->
 					<div v-if="groupedReactions[message.id]" class="mt-2 text-sm text-gray-600 flex gap-2">
 						<span
-							v-for="(count, type) in groupedReactions[message.id]"
+							v-for="(data, type) in groupedReactions[message.id]"
 							:key="type"
-							class="flex items-center bg-gray-100 px-2 py-1 rounded-full"
+							class="relative group flex items-center bg-gray-100 px-2 py-1 rounded-full"
 						>
-							{{ reactionEmojis[type] }} {{ count }}
+							{{ reactionEmojis[type] }} {{ data.count }}
+                            <div
+                            class="absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50"
+                            >
+                                {{ data.users.join(', ') }}
+                            </div>
 						</span>
 						<p @click="toggleReactionPicker(message.id)" class="cursor-pointer flex items-center bg-gray-100 px-2 py-1 rounded-full">+</p>
 					</div>
