@@ -168,7 +168,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-	<div class="h-screen flex flex-col py-5 px-5">
+	<div class="h-screen flex flex-col py-5 px-5 bg-slate-50">
         <div class="min-h-[5%] flex justify-between items-center">
             <h2 class="text-xl font-semibold">Chat</h2>
             <div class="flex items-center pb-1">
@@ -249,7 +249,7 @@ onBeforeUnmount(() => {
 			</div>
 		</div>
 
-		<div class="min-h-[5%] chat-input flex flex-col gap-2 items-start" v-if="loggedInUser">
+		<div class="min-h-[5%] chat-input flex flex-col gap-2 items-start bg-white" v-if="loggedInUser">
 			<p v-if="isSomeoneTyping" class="text-sm text-slate-600">Someone is typing...</p>
 			
 			<div class="relative flex w-full">

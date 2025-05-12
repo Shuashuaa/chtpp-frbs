@@ -65,7 +65,7 @@ onUnmounted(() => {
 
 
 <template>
-  <div class="border border-slate-300 p-3 rounded-md">
+  <div class="border border-slate-300 p-3 rounded-md bg-white">
     <h3 class="text-lg font-semibold mb-2">Users</h3>
     <p class="italic text-sm text-slate-400">
       online — ({{ onlineUsers.length }})

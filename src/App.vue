@@ -70,7 +70,7 @@ onMounted(() => {
     </div>
 
     <div v-if="loggedInUser">
-      <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 bg-slate-50">
         
         <div class="col-span-1 mx-5 my-5">
           <p >Hello, <strong>{{ loggedInUser.displayName }}!</strong> </p>
@@ -104,7 +104,7 @@ onMounted(() => {
           <div class="flex justify-end">
             <button
             @click="handleLogout"
-              class="border border-slate-300 rounded-md py-1 px-2 cursor-pointer hover:bg-red-400"
+              class="border border-slate-300 rounded-md py-1 px-2 cursor-pointer hover:bg-red-400 bg-white"
             >
               Logout
             </button>
