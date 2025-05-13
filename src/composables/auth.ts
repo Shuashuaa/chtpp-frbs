@@ -10,6 +10,17 @@ import {
     type User 
 } from 'firebase/auth';
 
+// Function to send email verification
+export async function sendVerificationEmail(user: User): Promise<void> {
+  try {
+      await sendEmailVerification(user);
+      console.log('Verification email sent successfully.');
+  } catch (error: any) {
+      console.error('Error sending verification email:', error.message);
+      throw error; // Re-throw the error for handling in the calling component
+  }
+}
+
 export async function registerUser(email: string, password: string, displayName: string): Promise<UserCredential | null> {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
