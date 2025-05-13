@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import Login from './Pages/Login.vue';
-import Register from './Pages/Register.vue';
 import Chat from './Pages/Chat.vue';
 import OnlineUsers from './components/OnlineUsers.vue';
 import { ref, onMounted } from 'vue';
-import { logoutUser } from './composables/auth';
+import { logoutUser, sendVerificationEmail } from './composables/auth';
 import { auth, db } from '@/firebase';
 import { doc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { BadgeCheck, TriangleAlert } from 'lucide-vue-next';
+import AuthVue from './Pages/Auth.vue';
+
 const loggedInUser = ref(auth.currentUser);
 const loading = ref(true); // Add a loading state
-const isLoginPage = ref(true);
+// const isLoginPage = ref(true);
+const isSendingVerification = ref(false);
 
 // Function to update user status to offline on explicit logout
 const handleLogout = async () => {
@@ -29,6 +30,24 @@ const handleLogout = async () => {
   // Call your existing logout function
   logoutUser();
 };
+
+// Function to handle sending the verification email
+const handleSendVerificationEmail = async () => {
+  if (loggedInUser.value && !isSendingVerification.value) {
+    isSendingVerification.value = true; // Disable button
+    try {
+      await sendVerificationEmail(loggedInUser.value);
+      alert('Verification email sent! Please check your inbox.'); // Simple feedback
+      // You might want to add more sophisticated UI feedback here
+    } catch (error) {
+      console.error('Failed to send verification email:', error);
+      alert('Failed to send verification email. Please try again.'); // Simple error feedback
+    } finally {
+      isSendingVerification.value = false; // Re-enable button
+    }
+  }
+};
+
 
 onMounted(() => {
   auth.onAuthStateChanged(async (user: any) => { // Make the callback async
@@ -62,11 +81,8 @@ onMounted(() => {
 
 <template>
   <div>
-    <div v-if="!loggedInUser && !loading" class="ml-5 mt-5">
-      <Login v-if="isLoginPage"/>
-      <Register v-else/>
-      <p v-if="isLoginPage" @click="isLoginPage = !isLoginPage">Don't Have an account yet? <span class="underline cursor-pointer text-blue-600">Register</span>.</p>
-      <p v-else @click="isLoginPage = !isLoginPage">Already have an account? <span class="underline cursor-pointer text-blue-600">Login</span>.</p>
+    <div v-if="!loggedInUser && !loading"> <!--class="ml-5 mt-5"-->
+      <AuthVue/>
     </div>
 
     <div v-if="loggedInUser">
@@ -88,8 +104,13 @@ onMounted(() => {
             </div>
             <div v-else>
               <div class="flex">
-                <TriangleAlert class="w-5 h-5 mr-1"/>
-                <a href="#" class="text-[15px] text-blue-500 hover:underline">verify</a>
+                <TriangleAlert class="w-5 h-5 mr-1 text-yellow-500"/> <button
+                  @click.prevent="handleSendVerificationEmail"
+                  :disabled="isSendingVerification"
+                  class="text-[15px] text-blue-500 hover:underline disabled:text-gray-400 disabled:cursor-not-allowed"
+                >
+                  {{ isSendingVerification ? 'Sending...' : 'verify' }}
+                </button>
               </div>
             </div>
           </div>
