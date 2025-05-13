@@ -16,7 +16,7 @@ const isLoginPage = ref(true);
       </div>
   
       <div class="flex flex-col items-center justify-center p-4">
-        <div class="w-full max-w-sm flex flex-col gap-10">
+        <div class="w-full flex items-center flex-col gap-10">
             <div class="flex justify-center items-center">
                 <img src="/nexus.png" class="mr-2" alt="" width="40">
                 <p class="text-slate-600"> — Neksəs.</p>
