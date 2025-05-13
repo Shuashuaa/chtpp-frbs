@@ -202,7 +202,7 @@ onBeforeUnmount(() => {
 				<!-- Message Content -->
 				<div v-else>
 					<span class="text-gray-700 text-sm font-bold mr-1">
-						{{ message.displayName || 'Anonymous' }}:
+						{{ message.displayName[0].toUpperCase() + message.displayName.slice(1) || 'Anonymous' }}:
 					</span>
                     <div
                         class="text-gray-600 text-left text-sm whitespace-pre-wrap mb-2"

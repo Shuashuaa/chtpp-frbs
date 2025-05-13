@@ -161,14 +161,14 @@ onUnmounted(() => {
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 bg-slate-50">
 
         <div class="col-span-1 mx-5 my-5">
-          <p >Hello, <strong>{{ loggedInUser.displayName }}!</strong> </p>
+          <p class="text-lg">Hello, <strong>{{ loggedInUser.displayName }}!</strong> </p>
           <button
             @click="handleLogout"
             class="border border-slate-300 rounded-md py-1 px-2 cursor-pointer hover:bg-red-400 lg:hidden"
           >
             Logout
           </button>
-          <span class="text-slate-600">{{ loggedInUser.uid }}</span>
+          <span class="text-slate-600 text-sm">{{ loggedInUser.uid }}</span>
           <div class="flex items-center">
             <p class="text-[13px] lg:mb-0 mr-1"><strong class="text-slate-700">Email Verified:</strong></p>
             <div v-if="loggedInUser.emailVerified === true">
