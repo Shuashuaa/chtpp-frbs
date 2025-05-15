@@ -19,6 +19,7 @@
 - [x] Made the text clickable if supposedly a link text
 - [x] Lazy loading for data to improved performance
 - [x] Fully Responsive interface
+- [x] Email Verification
 - [ ] Dark Mode
 - [ ] Reply Feature
 - [ ] Image Upload / Avatar Change
