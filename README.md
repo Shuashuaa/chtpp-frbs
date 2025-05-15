@@ -2,6 +2,8 @@
 
 ### 🌌 neksəs is a chat app built with vuejs3, tailwindcss and firebase
 
+![image](https://github.com/user-attachments/assets/4622030a-1f83-4ef3-a928-a8a158598e0f)
+
 # App Features
 
 - [x] Displaying of Messages
