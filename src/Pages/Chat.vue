@@ -173,7 +173,7 @@ onBeforeUnmount(() => {
             <h2 class="text-xl font-semibold">Chat</h2>
             <div class="flex items-center pb-1">
                 <div>
-                    <img class="w-6" src="/nexus.png" alt="">
+                    <img draggable="false" class="w-6" src="/nexus.png" alt="">
                 </div>
                 &nbsp;
                 <p class="text-[12px] text-slate-400">— v0.5.0.1</p>

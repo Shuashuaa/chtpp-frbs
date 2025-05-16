@@ -19,7 +19,7 @@ export default function linkify(text: string): string {
       if (imageExtensionRegex.test(url)) {
           // If it's likely an image URL, return an <img> tag
           // Added basic styling and alt text for accessibility
-          return `<img src="${href}" alt="Linked Image" class="inline-block max-w-full h-auto rounded-md shadow-sm my-2" />`;
+          return `<img src="${href}" alt="Linked Image" class="max-w-40 inline-block h-auto rounded-md shadow-sm my-2" />`;
       } else {
           // If it's not an image URL, return a standard <a> tag
           return `<a href="${href}" target="_blank" class="text-blue-500 underline break-all">${url}</a>`;
