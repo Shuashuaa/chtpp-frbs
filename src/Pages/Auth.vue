@@ -12,13 +12,13 @@ const isLoginPage = ref(true);
     <div class="grid grid-cols-1 lg:grid-cols-2 h-screen">
   
       <div class="hidden lg:block">
-        <img src="/nexus.gif" alt="Nexus GIF" class="object-cover w-full h-full">
+        <img draggable="false" src="/nexus.gif" alt="Nexus GIF" class="object-cover w-full h-full">
       </div>
   
       <div class="flex flex-col items-center justify-center p-4">
         <div class="w-full flex items-center flex-col gap-10">
             <div class="flex justify-center items-center">
-                <img src="/nexus.png" class="mr-2" alt="" width="40">
+                <img draggable="false" src="/nexus.png" class="mr-2" alt="" width="40">
                 <p class="text-slate-600"> — Neksəs.</p>
             </div>
 
