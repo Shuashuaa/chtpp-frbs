@@ -9,7 +9,7 @@ export default function linkify(text: string): string {
 
   // Regex to check for common image file extensions before query parameters or fragments (case-insensitive)
   // This regex looks for the extension followed by an optional query string (?...) or fragment (#...) before the end of the string.
-  const imageExtensionRegex = /\.(jpg|jpeg|png|gif|bmp|svg)(\?.*)?(#.*)?$/i;
+  const imageExtensionRegex = /\.(jpg|jpeg|png|gif|bmp|svg|webp)(\?.*)?(#.*)?$/i;
 
   return text.replace(urlRegex, (url) => {
       // Ensure the URL has a protocol for the href attribute
