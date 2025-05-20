@@ -20,7 +20,7 @@
 </script>
 
 <template>
-    <div class="flex flex-col gap-2 w-md">
+    <div class="flex flex-col gap-2 md:w-md">
         <h2>Login</h2>
         <input class="border border-slate-300 py-1 px-2" @keydown.enter="handleLogin" type="email" v-model="email" placeholder="Email">
         <input class="border border-slate-300 py-1 px-2" @keydown.enter="handleLogin" type="password" v-model="password" placeholder="Password">
