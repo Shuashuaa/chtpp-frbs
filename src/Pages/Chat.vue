@@ -180,74 +180,81 @@ onBeforeUnmount(() => {
             </div>
         </div>
 		
-		<div
-			ref="chatContainerRef"
-			class="flex-1 chat-messages border border-gray-300 p-2 my-2 overflow-y-auto bg-white rounded"
-		>
-			<div
-				v-for="(message, index) in groupedMessages"
-				:key="message.id || index"
-				class="message p-1 border-b border-dotted border-gray-200 last:border-b-0"
-				:class="message.userId == loggedInUser?.uid ? 'flex text-right justify-end' : 'text-left'"
-			>
-				<!-- Date Separator -->
-				<div v-if="message.type === 'date'" class="w-full text-center my-4">
-					<div class="flex items-center justify-center gap-2 text-gray-500 text-sm">
-						<hr class="flex-grow border-t border-gray-300" />
-						<span class="px-2">{{ message.label }}</span>
-						<hr class="flex-grow border-t border-gray-300" />
-					</div>
-				</div>
+        <div
+            ref="chatContainerRef"
+            class="relative flex-1 chat-messages border border-gray-300 p-2 my-2 overflow-y-auto bg-white rounded"
+        >
+            <div
+                v-for="(message, index) in groupedMessages"
+                :key="message.id || index"
+                class="message p-1 border-b border-dotted border-gray-200 last:border-b-0"
+                :class="message.userId == loggedInUser?.uid ? 'flex text-right justify-end' : 'text-left'"
+                >
+                <div v-if="message.type === 'date'" class="w-full text-center my-4">
+                    <div class="flex items-center justify-center gap-2 text-gray-500 text-sm">
+                    <hr class="flex-grow border-t border-gray-300" />
+                    <span class="px-2">{{ message.label }}</span>
+                    <hr class="flex-grow border-t border-gray-300" />
+                    </div>
+                </div>
 
-				<!-- Message Content -->
-				<div v-else>
-					<span class="text-gray-700 text-sm font-bold mr-1">
-						{{ message.displayName[0].toUpperCase() + message.displayName.slice(1) || 'Anonymous' }}:
-					</span>
+                <div v-else>
+                    <span class="text-gray-700 text-sm font-bold mr-1">
+                    {{ message.displayName[0].toUpperCase() + message.displayName.slice(1) || 'Anonymous' }}:
+                    </span>
                     <div
-                        class="text-gray-600 text-left text-sm whitespace-pre-wrap mb-2"
-                        v-html="linkify(message.text)"
+                    class="text-gray-600 text-left text-sm whitespace-pre-wrap mb-2"
+                    v-html="linkify(message.text)"
                     ></div>
 
-					<!-- Reaction Buttons -->
-					<Transition name="reactions-popup"
+                    <Transition
+                    name="reactions-popup"
                     @enter="staggerEnter"
                     @leave="staggerLeave"
-                    :css="false">
-                        <div v-if="openReactionMessageId === message.id" class="flex space-x-2 mt-2 *:cursor-pointer">
-                            <button
-                                v-for="(emoji, type, index) in reactionEmojis"
-                                :key="type"
-                                @click="addReaction(message.id, type)"
-                                :style="{ transitionDelay: `${index * 200}ms` }" >
-                                {{ emoji }}
-                            </button>
-                        </div>
+                    :css="false"
+                    >
+                    <div v-if="openReactionMessageId === message.id" class="flex space-x-2 mt-2 *:cursor-pointer">
+                        <button
+                        v-for="(emoji, type, index) in reactionEmojis"
+                        :key="type"
+                        @click="addReaction(message.id, type)"
+                        :style="{ transitionDelay: `${index * 200}ms` }"
+                        >
+                        {{ emoji }}
+                        </button>
+                    </div>
                     </Transition>
 
-					<!-- Display Reactions -->
-					<div v-if="groupedReactions[message.id]" class="mt-2 text-sm text-gray-600 flex gap-2">
-						<span
-							v-for="(data, type) in groupedReactions[message.id]"
-							:key="type"
-							class="relative group flex items-center bg-gray-100 px-2 py-1 rounded-full"
-						>
-							{{ reactionEmojis[type] }} {{ data.count }}
-                            <div
-                            class="absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50"
-                            >
-                                {{ data.users.join(', ') }}
-                            </div>
-						</span>
-						<p @click="toggleReactionPicker(message.id)" class="cursor-pointer flex items-center bg-gray-100 px-2 py-1 rounded-full">+</p>
-					</div>
-					
-					<span class="timestamp text-[11px] text-gray-400">
-						{{ formatTimestamp(message.timestamp) }}
-					</span>
-				</div>
-			</div>
-		</div>
+                    <div v-if="groupedReactions[message.id]" class="mt-2 text-sm text-gray-600 flex gap-2">
+                    <span
+                        v-for="(data, type) in groupedReactions[message.id]"
+                        :key="type"
+                        class="relative group flex items-center bg-gray-100 px-2 py-1 rounded-full"
+                    >
+                        {{ reactionEmojis[type] }} {{ data.count }}
+                        <div
+                        class="absolute bottom-full mb-1 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50"
+                        >
+                        {{ data.users.join(', ') }}
+                        </div>
+                    </span>
+                    <p @click="toggleReactionPicker(message.id)" class="cursor-pointer flex items-center bg-gray-100 px-2 py-1 rounded-full">+</p>
+                    </div>
+
+                    <span class="timestamp text-[11px] text-gray-400">
+                    {{ formatTimestamp(message.timestamp) }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- <div
+                v-if="loggedInUser?.emailVerified == false"
+                class="absolute inset-0 bg-white/19 shadow-lg backdrop-blur-sm border border-white/30 flex items-center justify-center text-white text-center z-20 rounded"
+                >
+                <p class="text-xl font-semibold">Please verify to see the chat</p>
+            </div> -->
+        </div>
+
 
 		<div class="min-h-[5%] chat-input flex flex-col gap-2 items-start bg-white" v-if="loggedInUser">
 			<p v-if="isSomeoneTyping" class="text-sm text-slate-600">Someone is typing...</p>
