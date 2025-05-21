@@ -69,7 +69,11 @@ const newMessage = ref('');
 import { useSendMessage } from '@/composables/useSendMessage';
 const {
     sendMessage,
-    isSending
+    isSending,
+    isCurrentUserBanned, // <-- Added this
+    banReason,           // <-- Added this
+    banEndTime,          // <-- Added this
+    checkUserBanStatus   // <-- Added this
 } = useSendMessage(newMessage);
 
 import { useTyping } from '@/composables/useTyping';
@@ -109,6 +113,8 @@ watch(
 
 onMounted(() => {
 	chatContainerRef.value?.addEventListener('scroll', handleScroll);
+
+    checkUserBanStatus();
 	
     if (db && loggedInUser.value) {
         const messagesRef = collection(db, 'messages_aports'); 
@@ -184,6 +190,17 @@ onBeforeUnmount(() => {
             ref="chatContainerRef"
             class="relative flex-1 chat-messages border border-gray-300 p-2 my-2 overflow-y-auto bg-white rounded"
         >
+            <!-- <div v-if="isCurrentUserBanned" class="ban-message w-full text-center py-2 px-4 rounded-md">
+                <p class="text-red-700 font-semibold">
+                    You are currently banned from sending messages.
+                </p>
+                <p v-if="banReason" class="text-red-600 text-sm">
+                    Reason: {{ banReason }}.
+                </p>
+                <p v-if="banEndTime" class="text-red-600 text-sm">
+                    Your ban expires at: {{ banEndTime.toLocaleString() }}.
+                </p>
+            </div> -->
             <div
                 v-for="(message, index) in groupedMessages"
                 :key="message.id || index"
@@ -274,28 +291,59 @@ onBeforeUnmount(() => {
 				</div>
 
 				<!-- Message Input Area -->
-				<div class="flex w-full">
-					<textarea 
-						v-model="newMessage" 
-						placeholder="Type your message..." 
-						@input="handleTyping" 
-						@blur="stopTyping" 
-						@keydown.enter.exact.prevent="sendMessage"
-						rows="2"
-						class="w-full p-3 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none transition-all"
-					/>
-					
-					<!-- Send Button -->
-					<button
-						@click="sendMessage"
-						:disabled="!newMessage.trim() || isSending"
-						class="w-25 ml-2 text-sm px-5 py-2 border border-gray-300 rounded-r-md bg-blue-500 hover:bg-blue-400 text-white disabled:bg-gray-300 disabled:cursor-not-allowed transition-all"
-					>
-						Send
-					</button>
+				<div class="w-full">
+                    <div v-if="isCurrentUserBanned" class="ban-message text-center py-2 px-4 rounded-md">
+                        <p class="text-red-700 font-semibold">
+                            You are currently banned from sending messages.
+                        </p>
+                        <p v-if="banReason" class="text-red-600 text-sm">
+                            Reason: {{ banReason }}.
+                        </p>
+                        <p v-if="banEndTime" class="text-red-600 text-sm">
+                            Your ban expires at: {{ banEndTime.toLocaleString() }}.
+                        </p>
+                    </div>
+
+                    <div v-else class="flex w-full">
+                        <textarea 
+                            v-model="newMessage" 
+                            placeholder="Type your message..." 
+                            @input="handleTyping" 
+                            @blur="stopTyping" 
+                            @keydown.enter.exact.prevent="sendMessage"
+                            rows="2"
+                            class="w-full p-3 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none transition-all"
+                            :disabled="isSending || isCurrentUserBanned" />
+
+                        <button
+                            @click="sendMessage"
+                            :disabled="!newMessage.trim() || isSending || isCurrentUserBanned" class="w-25 ml-2 text-sm px-5 py-2 border border-gray-300 rounded-r-md bg-blue-500 hover:bg-blue-400 text-white disabled:bg-gray-300 disabled:cursor-not-allowed transition-all"
+                        >
+                            Send
+                        </button>
+                    </div>
 				</div>
 			</div>
 		</div>
 
   	</div>
 </template>
+				<!-- Message Input Area -->
+				<!-- <div class="flex w-full">
+					<textarea 
+                        v-model="newMessage" 
+                        placeholder="Type your message..." 
+                        @input="handleTyping" 
+                        @blur="stopTyping" 
+                        @keydown.enter.exact.prevent="sendMessage"
+                        rows="2"
+                        class="w-full p-3 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none transition-all"
+                        :disabled="isSending || isCurrentUserBanned" />
+
+                    <button
+                        @click="sendMessage"
+                        :disabled="!newMessage.trim() || isSending || isCurrentUserBanned" class="w-25 ml-2 text-sm px-5 py-2 border border-gray-300 rounded-r-md bg-blue-500 hover:bg-blue-400 text-white disabled:bg-gray-300 disabled:cursor-not-allowed transition-all"
+                    >
+                        Send
+                    </button>
+				</div> -->
