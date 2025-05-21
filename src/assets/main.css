@@ -1,5 +1,18 @@
 @import "tailwindcss";
 
+@layer utilities {
+    /* For WebKit browsers (Chrome, Safari, Opera) */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+  
+    /* For IE, Edge, and Firefox */
+    .no-scrollbar {
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+}
+
 * {
     font-family: "Montserrat", sans-serif;
     font-optical-sizing: auto;
