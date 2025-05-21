@@ -202,8 +202,10 @@ onBeforeUnmount(() => {
                     <span class="text-gray-700 text-sm font-bold mr-1">
                     {{ message.displayName[0].toUpperCase() + message.displayName.slice(1) || 'Anonymous' }}:
                     </span>
+                    
                     <div
-                    class="text-gray-600 text-left text-sm whitespace-pre-wrap mb-2"
+                    class="text-gray-600 text-sm whitespace-pre-wrap mb-2"
+                    :class="message.userId == loggedInUser?.uid ? 'text-right' : 'text-left'"
                     v-html="linkify(message.text)"
                     ></div>
 
