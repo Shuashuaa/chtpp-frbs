@@ -21,39 +21,61 @@ export function useSendMessage(newMessage: Ref<string>) {
     try {
         const messagesRef = collection(db, 'messages_aports');
         const currentUserId = loggedInUser.value.uid;
-        const now = new Date();
+        const now = new Date(); // Current client time
 
-        // Calculate the start and end of the current minute
-        const startOfMinute = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes(), 0, 0);
-        const endOfMinute = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes(), 59, 999);
-
-        // Query for messages from the current user within the current minute
-        const q = query(
-          messagesRef,
-          where('userId', '==', currentUserId),
-          where('timestamp', '>=', startOfMinute),
-          where('timestamp', '<=', endOfMinute),
-          orderBy('timestamp', 'desc'), // Order by timestamp to potentially get the latest if multiple exist (though ideally there'd be one)
-          limit(1) // We only need to find one
+        // 1. Get the very last message in the entire chat (regardless of user)
+        const lastMessageQuery = query(
+            messagesRef,
+            orderBy('timestamp', 'desc'), // Get the most recent
+            limit(1) // Only need one
         );
+        const lastMessageSnapshot = await getDocs(lastMessageQuery);
 
-        const querySnapshot = await getDocs(q);
+        // Helper function to check if two dates are in the same minute
+        const areInSameMinute = (date1: Date, date2: Date) =>
+            date1.getFullYear() === date2.getFullYear() &&
+            date1.getMonth() === date2.getMonth() &&
+            date1.getDate() === date2.getDate() &&
+            date1.getHours() === date2.getHours() &&
+            date1.getMinutes() === date2.getMinutes();
 
-        if (!querySnapshot.empty) {
-            // A message from this user exists within the current minute, update it
-            const existingMessageDoc = querySnapshot.docs[0];
-            const messageDocRef = doc(db, 'messages_aports', existingMessageDoc.id);
+        let shouldCreateNewMessage = true; // Default: always create a new message
 
-            // Append the new message text to the existing one, or simply replace if preferred
-            // For grouping, appending makes more sense. Add a separator like newline.
-            const existingText = existingMessageDoc.data().text;
-            await updateDoc(messageDocRef, {
-                text: `${existingText}\n${messageText}`, // Append new text with a newline
-                timestamp: serverTimestamp(), // Update timestamp to reflect the latest addition
-            });
-            console.log('Message updated:', existingMessageDoc.id);
-        } else {
-            // No existing message found for this user in the current minute, add a new one
+        if (!lastMessageSnapshot.empty) {
+            const lastMessageDoc = lastMessageSnapshot.docs[0];
+            const lastMessageData = lastMessageDoc.data();
+            const lastMessageUserId = lastMessageData.userId;
+            const lastMessageTimestamp = lastMessageData.timestamp?.toDate(); // Convert Firestore Timestamp to Date object
+
+            // Ensure timestamp exists for comparison
+            if (lastMessageTimestamp) {
+                if (lastMessageUserId === currentUserId) {
+                    // Scenario: The last message was from THE CURRENT user
+                    // Check if that last message (from me) is within the same minute as 'now'
+                    if (areInSameMinute(lastMessageTimestamp, now)) {
+                        // If same user and same minute, we should update
+                        const messageDocRef = doc(db, 'messages_aports', lastMessageDoc.id);
+                        const existingText = lastMessageData.text; // Use data from the fetched doc
+
+                        await updateDoc(messageDocRef, {
+                            text: `${existingText}\n${messageText}`, // Append new text with a newline
+                            timestamp: serverTimestamp(), // Update timestamp to reflect the latest addition
+                        });
+                        console.log('Message updated:', lastMessageDoc.id);
+                        shouldCreateNewMessage = false; // Set to false, as we've already updated
+                    }
+                    // If from the same user but not in the same minute, shouldCreateNewMessage remains true
+                }
+                // If lastMessageUserId !== currentUserId, shouldCreateNewMessage remains true
+                // meaning a new message will be created, as per the requirement.
+            }
+        }
+
+        // If shouldCreateNewMessage is still true at this point, it means:
+        // 1. The chat was empty.
+        // 2. The last message was from another user.
+        // 3. The last message was from the current user, but not in the same minute.
+        if (shouldCreateNewMessage) {
             await addDoc(messagesRef, {
                 text: messageText,
                 userId: currentUserId,
@@ -63,15 +85,17 @@ export function useSendMessage(newMessage: Ref<string>) {
             console.log('New message added.');
         }
 
+        // Reset input and UI state
         newMessage.value = '';
         scrollToBottom();
         stopTyping();
+
     } catch (error) {
-      console.error('Error sending or updating message:', error);
+        console.error('Error sending or updating message:', error);
     } finally {
-      isSending.value = false;
+        isSending.value = false;
     }
-  };
+};
 
   return {
     isSending,
