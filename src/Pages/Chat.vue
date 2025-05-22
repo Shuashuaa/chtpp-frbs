@@ -191,7 +191,7 @@ onBeforeUnmount(() => {
 		
         <div
             ref="chatContainerRef"
-            class="relative flex-1 chat-messages border border-gray-300 p-2 my-2 overflow-y-auto bg-white rounded"
+            class="relative flex-1 chat-messages border border-gray-300 p-2 px-4 my-2 overflow-y-auto bg-white rounded"
         >
             <!-- <div v-if="isCurrentUserBanned" class="ban-message w-full text-center py-2 px-4 rounded-md">
                 <p class="text-red-700 font-semibold">
