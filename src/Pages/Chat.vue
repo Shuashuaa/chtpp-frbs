@@ -191,7 +191,7 @@ onBeforeUnmount(() => {
 		
         <div
             ref="chatContainerRef"
-            class="relative flex-1 chat-messages border border-gray-300 p-2 px-4 my-2 overflow-y-auto bg-white rounded"
+            class="relative flex-1 chat-messages border border-gray-300 p-2 pl-3 my-2 overflow-y-auto bg-white rounded"
         >
             <!-- <div v-if="isCurrentUserBanned" class="ban-message w-full text-center py-2 px-4 rounded-md">
                 <p class="text-red-700 font-semibold">
@@ -207,8 +207,8 @@ onBeforeUnmount(() => {
             <div
                 v-for="(message, index) in groupedMessages"
                 :key="message.id || index"
-                class="message p-1 border-b border-dotted border-gray-200 last:border-b-0"
-                :class="message.userId == loggedInUser?.uid ? 'flex text-right justify-end' : 'text-left'"
+                class="flex message p-1 border-b border-dotted border-gray-200 last:border-b-0"
+                :class="message.userId == loggedInUser?.uid ? 'text-right justify-end' : 'text-left'"
                 >
                 <div v-if="message.type === 'date'" class="w-full text-center my-4">
                     <div class="flex items-center justify-center gap-2 text-gray-500 text-sm">
@@ -220,31 +220,31 @@ onBeforeUnmount(() => {
 
                 <div v-else>
                     <span class="text-gray-700 text-sm font-bold mr-1">
-                    {{ message.displayName[0].toUpperCase() + message.displayName.slice(1) || 'Anonymous' }}:
+                        {{ message.displayName[0].toUpperCase() + message.displayName.slice(1) || 'Anonymous' }}:
                     </span>
                     
                     <div
-                    class="text-gray-600 text-sm whitespace-pre-wrap mb-2"
-                    :class="message.userId == loggedInUser?.uid ? 'text-right' : 'text-left'"
-                    v-html="linkify(message.text)"
+                        class="text-left text-gray-600 text-sm whitespace-pre-wrap p-3 mb-2 rounded-lg"
+                        :class="message.userId == loggedInUser?.uid ? 'bg-gray-700 text-white' : 'bg-gray-200 text-black'"
+                        v-html="linkify(message.text)"
                     ></div>
 
                     <Transition
-                    name="reactions-popup"
-                    @enter="staggerEnter"
-                    @leave="staggerLeave"
-                    :css="false"
+                        name="reactions-popup"
+                        @enter="staggerEnter"
+                        @leave="staggerLeave"
+                        :css="false"
                     >
-                    <div v-if="openReactionMessageId === message.id" class="flex space-x-2 mt-2 *:cursor-pointer">
-                        <button
-                        v-for="(emoji, type, index) in reactionEmojis"
-                        :key="type"
-                        @click="addReaction(message.id, type)"
-                        :style="{ transitionDelay: `${index * 200}ms` }"
-                        >
-                        {{ emoji }}
-                        </button>
-                    </div>
+                        <div v-if="openReactionMessageId === message.id" class="flex space-x-2 mt-2 *:cursor-pointer">
+                            <button
+                            v-for="(emoji, type, index) in reactionEmojis"
+                            :key="type"
+                            @click="addReaction(message.id, type)"
+                            :style="{ transitionDelay: `${index * 200}ms` }"
+                            >
+                            {{ emoji }}
+                            </button>
+                        </div>
                     </Transition>
 
                     <div v-if="groupedReactions[message.id]" class="mt-2 text-sm text-gray-600 flex gap-2">
