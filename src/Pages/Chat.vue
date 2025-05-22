@@ -6,6 +6,8 @@ import { formatTimestamp } from '../composables/format';
 import { useSmartChatScroll } from '@/composables/useSmartChatScroll';
 import linkify from '@/composables/useLinkify';
 
+import BanStatus from '@/components/BanStatus.vue';
+
 const messageLimit = ref(15);
 const allMessages = ref<ChatMessage[]>([]);
 const hasMoreMessages = ref(true);
@@ -70,10 +72,10 @@ import { useSendMessage } from '@/composables/useSendMessage';
 const {
     sendMessage,
     isSending,
-    isCurrentUserBanned, // <-- Added this
-    banReason,           // <-- Added this
-    banEndTime,          // <-- Added this
-    checkUserBanStatus   // <-- Added this
+    isCurrentUserBanned,
+    banReason,
+    banEndTime,
+    checkUserBanStatus 
 } = useSendMessage(newMessage);
 
 import { useTyping } from '@/composables/useTyping';
@@ -96,6 +98,7 @@ const messages = ref<ChatMessage[]>([]);
 const originalTitle = document.title;
 
 import { useGroupedMessages } from '@/composables/useGroupedMessages';
+import type BanStatusVue from '@/components/BanStatus.vue';
 const { groupedMessages } = useGroupedMessages(messages);
 
 //======================== End of Declaration ===============================
@@ -293,7 +296,7 @@ onBeforeUnmount(() => {
 				<!-- Message Input Area -->
 				<div class="w-full">
                     <div v-if="isCurrentUserBanned" class="ban-message text-center py-2 px-4 rounded-md">
-                        <p class="text-red-700 font-semibold">
+                        <!-- <p class="text-red-700 font-semibold">
                             You are currently banned from sending messages.
                         </p>
                         <p v-if="banReason" class="text-red-600 text-sm">
@@ -301,7 +304,14 @@ onBeforeUnmount(() => {
                         </p>
                         <p v-if="banEndTime" class="text-red-600 text-sm">
                             Your ban expires at: {{ banEndTime.toLocaleString() }}.
-                        </p>
+                        </p> -->
+
+                        <BanStatus
+                            :is-banned="isCurrentUserBanned"
+                            :reason="banReason"
+                            :ban-ends-at="banEndTime"
+                            :on-ban-expired="checkUserBanStatus"
+                        />
                     </div>
 
                     <div v-else class="flex w-full">
@@ -313,7 +323,8 @@ onBeforeUnmount(() => {
                             @keydown.enter.exact.prevent="sendMessage"
                             rows="2"
                             class="w-full p-3 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none transition-all"
-                            :disabled="isSending || isCurrentUserBanned" />
+                            :disabled="isCurrentUserBanned" 
+                        /> <!-- isSending ||  -->
 
                         <button
                             @click="sendMessage"
