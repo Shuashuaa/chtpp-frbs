@@ -23,6 +23,7 @@
 - [x] Fully Responsive interface
 - [x] Email Verification
 - [x] Robust Back-end Spam Detection and Banning
+- [x] A fully Optimized Copy-to-Clipboard Image Converter
 
 ### Upcoming Features:
 
